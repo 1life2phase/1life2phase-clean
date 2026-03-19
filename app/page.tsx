@@ -1,65 +1,162 @@
-import Image from "next/image";
+'use client'
+
+import { useState } from "react";
+import { createClient } from "@supabase/supabase-js";
+
+const supabase = createClient(
+  "https://bkwyqwrkiycfvmfmnksu.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJrd3lxd3JraXljZnZtZm1ua3N1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM4NjcyNDgsImV4cCI6MjA4OTQ0MzI0OH0.tomDywpNyTPxmO1F1Oc6vDeUrviO94ntBBY26qOlpqo"
+);
 
 export default function Home() {
+  const [email, setEmail] = useState("");
+  const [status, setStatus] = useState("");
+
+  const handleSubmit = async () => {
+    if (!email) {
+      setStatus("enter email");
+      return;
+    }
+
+    const { error } = await supabase
+      .from("emails")
+      .insert([{ email }]);
+
+    if (error) {
+      if (error.message.includes("duplicate")) {
+        setStatus("already joined");
+      } else {
+        setStatus("error, try again");
+      }
+    } else {
+      setStatus("you're in");
+      setEmail("");
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="flex items-center justify-center min-h-screen bg-[#fafafa] text-black px-6">
+      <div className="max-w-sm mx-auto text-center">
+
+        {/* 로고 */}
+        <div className="mb-10 text-sm" style={{ fontFamily: 'Schoolbell' }}>
+          1life2phase
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+        {/* 타이틀 */}
+        <h1 className="mb-8" style={{ fontFamily: 'Schoolbell', fontSize: '30px' }}>
+          your workout journal
+        </h1>
+
+        {/* 노트 */}
+        <div
+          className="text-left mx-auto w-fit"
+          style={{
+            fontFamily: 'Schoolbell',
+            fontSize: '18px',
+            lineHeight: '1.6',
+          }}
+        >
+          today’s workout…<br />
+          bench 185 x 5<br />
+          felt stronger than last week
+        </div>
+
+        {/* 변화 */}
+        <div
+          className="mt-6 mb-2"
+          style={{ fontFamily: 'Schoolbell', fontSize: '14px' }}
+        >
+          +10 lbs this week
+        </div>
+
+        {/* 그래프 */}
+        <div className="flex flex-col items-center mt-16">
+          <svg width="220" height="100">
+            <path
+              d="M10 80 Q 50 60 90 70 T 140 50 T 200 40"
+              stroke="black"
+              strokeWidth="2.5"
+              fill="none"
+              strokeLinecap="round"
+              style={{
+                strokeDasharray: 300,
+                strokeDashoffset: 300,
+                animation: 'draw 1.5s ease forwards',
+              }}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </svg>
+
+          <div
+            className="flex justify-between w-full mt-4 px-4"
+            style={{ fontFamily: 'Schoolbell', fontSize: '12px' }}
           >
-            Documentation
-          </a>
+            <span>last week</span>
+            <span>now</span>
+          </div>
         </div>
-      </main>
-    </div>
+
+        {/* 기간 */}
+        <div
+          className="flex justify-center gap-6 mt-10"
+          style={{ fontFamily: 'Schoolbell', fontSize: '14px' }}
+        >
+          <span className="underline">1W</span>
+          <span>1M</span>
+          <span>3M</span>
+          <span>YTD</span>
+          <span>ALL</span>
+        </div>
+
+        {/* 구분선 */}
+        <div
+          className="my-14"
+          style={{
+            fontFamily: 'Schoolbell',
+            fontSize: '12px',
+            opacity: 0.4,
+          }}
+        >
+          —
+        </div>
+
+        {/* CTA */}
+        <div className="flex flex-col items-center">
+
+          <div
+            className="mb-4"
+            style={{ fontFamily: 'Schoolbell', fontSize: '14px' }}
+          >
+            track your strength
+          </div>
+
+          <input
+            type="email"
+            placeholder="enter your email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-52 border-b border-black mb-3 text-center outline-none"
+            style={{ fontFamily: 'Schoolbell', fontSize: '16px' }}
+          />
+
+          <button
+            onClick={handleSubmit}
+            className="px-5 py-2 border border-black rounded-lg"
+            style={{ fontFamily: 'Schoolbell', fontSize: '14px' }}
+          >
+            get early access
+          </button>
+
+          {/* 상태 메시지 */}
+          {status && (
+            <div className="mt-4 text-sm opacity-70">
+              {status}
+            </div>
+          )}
+
+        </div>
+
+      </div>
+    </main>
   );
 }
